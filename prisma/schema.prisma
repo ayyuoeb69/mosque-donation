@@ -1,0 +1,70 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model MosqueContent {
+  id                    String   @id @default(cuid())
+  title                 String
+  description           String
+  goal                  Float
+  currentAmount         Float    @default(0)
+  donorCount            Int      @default(0)
+  logoUrl               String?
+  bannerImageUrl        String?
+  qrCodeUrl             String?
+  beforeRenovationImageUrl String?
+  afterRenovationImageUrl  String?
+  beforeRenovationDesc     String?
+  afterRenovationDesc      String?
+  bankName              String?
+  accountNumber         String?
+  accountName           String?
+  isActive              Boolean  @default(true)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+}
+
+model Donation {
+  id            String   @id @default(cuid())
+  donorName     String?
+  donorEmail    String?
+  amount        Float
+  message       String?
+  isAnonymous   Boolean  @default(false)
+  notes         String?
+  createdAt     DateTime @default(now())
+}
+
+model DonationRecap {
+  id            String   @id @default(cuid())
+  donationId    String
+  donorName     String
+  donorEmail    String?
+  donorPhone    String?
+  transferProof String?
+  notes         String?  // Now represents prayers/hopes about the mosque
+  isVerified    Boolean  @default(false)
+  isRejected    Boolean  @default(false)
+  verifiedAt    DateTime?
+  verifiedBy    String?
+  createdAt     DateTime @default(now())
+}
