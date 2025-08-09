@@ -24,7 +24,7 @@ A modern, responsive web application built with Next.js for mosque donation camp
 
 - **Frontend**: Next.js 15, React, TypeScript, Tailwind CSS
 - **Backend**: Next.js API Routes
-- **Database**: SQLite with Prisma ORM
+- **Database**: PostgreSQL with Prisma ORM
 - **Authentication**: NextAuth.js
 - **UI Components**: Lucide React icons
 - **Form Handling**: React Hook Form with Zod validation
@@ -63,6 +63,46 @@ A modern, responsive web application built with Next.js for mosque donation camp
    - Landing Page: http://localhost:3002
    - Admin Panel: http://localhost:3002/admin/login
    - Admin Credentials: admin@mail.com / admin123
+
+## Deployment to Vercel
+
+### Prerequisites
+- Vercel account
+- PostgreSQL database (you can use Vercel Postgres, Supabase, or any other PostgreSQL provider)
+
+### Steps
+
+1. **Set up PostgreSQL Database**
+   - Create a PostgreSQL database (Vercel Postgres, Supabase, PlanetScale, etc.)
+   - Get your connection string
+
+2. **Deploy to Vercel**
+   ```bash
+   # Install Vercel CLI
+   npm i -g vercel
+   
+   # Deploy
+   vercel
+   ```
+
+3. **Configure Environment Variables**
+   In your Vercel project settings, add these environment variables:
+   ```
+   DATABASE_URL=postgresql://username:password@host:port/database
+   NEXTAUTH_URL=https://your-domain.vercel.app
+   NEXTAUTH_SECRET=your-secret-key-here
+   ```
+
+4. **Run Database Migrations**
+   ```bash
+   # Connect to your production database
+   npx prisma migrate deploy
+   ```
+
+### Important Notes
+- The build process automatically runs `prisma generate` to create the Prisma client
+- Make sure your PostgreSQL database is accessible from Vercel's servers
+- For production, use a strong NEXTAUTH_SECRET (generate with: `openssl rand -base64 32`)
 
 ## Usage
 
