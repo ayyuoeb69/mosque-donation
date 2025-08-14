@@ -1,34 +1,39 @@
-# Mosque Donation Platform
+# Mosque Donation Project
 
-A modern, responsive web application built with Next.js for mosque donation campaigns. Features an admin panel for content management and a beautiful landing page optimized for donations.
+A comprehensive donation management system built with Next.js 15, designed specifically for mosque fundraising campaigns.
 
-## Features
+## ✨ Features
 
-### Admin Panel
-- 🔐 **Secure Authentication** - Admin login with NextAuth.js
-- 📝 **Content Management** - Edit title, description, and fundraising goal
-- 🖼️ **Image Upload** - Upload logo, banner image, and QR code
-- 📊 **Real-time Stats** - Track donations and progress
-- 📱 **Responsive Design** - Works on all devices
+### 🏛️ Public Features
+- **Modern Landing Page** - Responsive design with mosque information
+- **Donation System** - Secure donation collection with receipt generation
+- **Progress Tracking** - Real-time funding progress with visual indicators
+- **Construction Progress** - Photo timeline of building progress
+- **Prayer Requests** - Community prayer submission system
+- **Social Media Integration** - WhatsApp, Email, Instagram, Twitter, TikTok links
+- **SEO Optimized** - Dynamic metadata, structured data, sitemap
 
-### Landing Page
-- 🎨 **Modern UI** - Clean, professional design with Islamic themes
-- 📱 **Mobile Optimized** - Responsive design for all screen sizes
-- 💰 **Donation Form** - Easy-to-use donation interface with preset amounts
-- 📈 **Progress Tracking** - Visual progress bar and statistics
-- 👥 **Recent Donations** - Display recent donor contributions
-- 🔍 **SEO Optimized** - Meta tags and Open Graph support
-- 📱 **QR Code Support** - Quick donation via QR code scanning
+### 🔐 Admin Features
+- **Content Management** - Update mosque information, goals, descriptions
+- **Image Management** - Upload logos, banners, before/after photos
+- **Progress Images** - Manage construction progress photos with captions
+- **Donation Verification** - Review and approve donation confirmations
+- **PDF Proposals** - Upload and manage detailed project proposals
 
-## Technology Stack
+### 🌐 Multi-language Support
+- **Indonesian Interface** - Fully localized for Indonesian users
+- **Cultural Sensitivity** - Islamic-appropriate design and messaging
 
-- **Frontend**: Next.js 15, React, TypeScript, Tailwind CSS
-- **Backend**: Next.js API Routes
-- **Database**: PostgreSQL with Prisma ORM
+## 🚀 Tech Stack
+
+- **Framework**: Next.js 15 (App Router)
+- **Database**: PostgreSQL (via Prisma ORM)
 - **Authentication**: NextAuth.js
-- **UI Components**: Lucide React icons
-- **Form Handling**: React Hook Form with Zod validation
-- **File Upload**: Built-in file handling system
+- **File Storage**: Cloudinary (production) / Local (development)
+- **Styling**: Tailwind CSS
+- **UI Components**: Radix UI + Lucide Icons
+- **Forms**: React Hook Form + Zod validation
+- **Deployment**: Vercel
 
 ## Getting Started
 
@@ -64,45 +69,45 @@ A modern, responsive web application built with Next.js for mosque donation camp
    - Admin Panel: http://localhost:3002/admin/login
    - Admin Credentials: admin@mail.com / admin123
 
-## Deployment to Vercel
+## 🚀 Deployment
 
-### Prerequisites
-- Vercel account
-- PostgreSQL database (you can use Vercel Postgres, Supabase, or any other PostgreSQL provider)
+### Vercel Deployment (Recommended)
 
-### Steps
+This project is optimized for Vercel deployment with PostgreSQL and Cloudinary.
 
-1. **Set up PostgreSQL Database**
-   - Create a PostgreSQL database (Vercel Postgres, Supabase, PlanetScale, etc.)
-   - Get your connection string
+**Quick Deploy:**
+1. Push your code to GitHub
+2. Connect to Vercel
+3. Set environment variables
+4. Deploy!
 
-2. **Deploy to Vercel**
-   ```bash
-   # Install Vercel CLI
-   npm i -g vercel
-   
-   # Deploy
-   vercel
-   ```
+**For detailed step-by-step instructions, see [VERCEL_DEPLOYMENT.md](./VERCEL_DEPLOYMENT.md)**
 
-3. **Configure Environment Variables**
-   In your Vercel project settings, add these environment variables:
-   ```
-   DATABASE_URL=postgresql://username:password@host:port/database
-   NEXTAUTH_URL=https://your-domain.vercel.app
-   NEXTAUTH_SECRET=your-secret-key-here
-   ```
+### Database Migration
 
-4. **Run Database Migrations**
-   ```bash
-   # Connect to your production database
-   npx prisma migrate deploy
-   ```
+If migrating from SQLite to PostgreSQL:
+```bash
+npm run migrate-to-postgres
+```
 
-### Important Notes
-- The build process automatically runs `prisma generate` to create the Prisma client
-- Make sure your PostgreSQL database is accessible from Vercel's servers
-- For production, use a strong NEXTAUTH_SECRET (generate with: `openssl rand -base64 32`)
+## 📦 Environment Variables
+
+### Required
+```env
+DATABASE_URL=               # PostgreSQL connection string
+NEXTAUTH_URL=              # Your domain URL
+NEXTAUTH_SECRET=           # 32-character secret key
+ADMIN_EMAIL=               # Admin login email
+ADMIN_PASSWORD=            # Admin login password
+NEXT_PUBLIC_SITE_URL=      # Public site URL
+```
+
+### Optional (Production)
+```env
+CLOUDINARY_CLOUD_NAME=     # Cloudinary cloud name
+CLOUDINARY_API_KEY=        # Cloudinary API key
+CLOUDINARY_API_SECRET=     # Cloudinary API secret
+```
 
 ## Usage
 

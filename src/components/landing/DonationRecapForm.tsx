@@ -5,13 +5,15 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { X, Upload, CheckCircle } from "lucide-react"
+import Captcha from "../ui/Captcha"
 
 const recapSchema = z.object({
   donationId: z.string(),
   donorName: z.string().min(1, "Nama wajib diisi"),
   donorEmail: z.string().email("Email tidak valid").optional().or(z.literal("")),
   donorPhone: z.string().optional(),
-  notes: z.string().optional()
+  notes: z.string().optional(),
+  captchaVerified: z.boolean().refine(val => val === true, "Verifikasi captcha wajib diselesaikan")
 })
 
 type RecapForm = z.infer<typeof recapSchema>
@@ -26,11 +28,13 @@ export default function DonationRecapForm({ onClose, donationId }: DonationRecap
   const [isSuccess, setIsSuccess] = useState(false)
   const [transferProof, setTransferProof] = useState<File | null>(null)
   const [fileError, setFileError] = useState<string | null>(null)
+  const [captchaVerified, setCaptchaVerified] = useState(false)
 
-  const { register, handleSubmit, formState: { errors } } = useForm<RecapForm>({
+  const { register, handleSubmit, formState: { errors }, setValue } = useForm<RecapForm>({
     resolver: zodResolver(recapSchema),
     defaultValues: {
-      donationId: donationId
+      donationId: donationId,
+      captchaVerified: false
     }
   })
 
@@ -40,12 +44,17 @@ export default function DonationRecapForm({ onClose, donationId }: DonationRecap
       return
     }
 
+    if (!captchaVerified) {
+      alert("Harap selesaikan verifikasi captcha terlebih dahulu")
+      return
+    }
+
     setIsLoading(true)
 
     try {
       const formData = new FormData()
       Object.entries(data).forEach(([key, value]) => {
-        if (value) formData.append(key, value)
+        if (value) formData.append(key, String(value))
       })
       
       if (transferProof) {
@@ -84,6 +93,11 @@ export default function DonationRecapForm({ onClose, donationId }: DonationRecap
       setTransferProof(file)
       setFileError(null)
     }
+  }
+
+  const handleCaptchaVerify = (verified: boolean) => {
+    setCaptchaVerified(verified)
+    setValue('captchaVerified', verified)
   }
 
   if (isSuccess) {
@@ -226,6 +240,17 @@ export default function DonationRecapForm({ onClose, donationId }: DonationRecap
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
               placeholder="Sampaikan doa dan harapan Anda untuk masjid ini..."
             />
+          </div>
+
+          {/* Captcha */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Verifikasi Keamanan <span className="text-red-500">*</span>
+            </label>
+            <Captcha onVerify={handleCaptchaVerify} />
+            {errors.captchaVerified && (
+              <p className="mt-1 text-sm text-red-600">{errors.captchaVerified.message}</p>
+            )}
           </div>
 
           {/* Submit Button */}

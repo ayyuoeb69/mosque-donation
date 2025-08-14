@@ -14,14 +14,15 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Mosque Donation - Help Build Our Community",
-  description: "Join us in building a beautiful mosque that will serve as a center for worship, community gatherings, and Islamic education for generations to come.",
-  keywords: ["mosque", "donation", "charity", "community", "islamic", "fundraising"],
-  authors: [{ name: "Mosque Community" }],
+  title: "Donasi Masjid - Membangun Rumah Ibadah Bersama",
+  description: "Bergabunglah membangun masjid yang indah untuk menjadi pusat ibadah, berkumpul komunitas, dan pendidikan Islam untuk generasi mendatang.",
+  keywords: ["donasi masjid", "pembangunan masjid", "infak", "sedekah", "zakat", "wakaf", "fundraising masjid", "komunitas muslim"],
+  authors: [{ name: "Komunitas Masjid" }],
   openGraph: {
-    title: "Mosque Donation - Help Build Our Community",
-    description: "Join us in building a beautiful mosque for our community",
+    title: "Donasi Masjid - Membangun Rumah Ibadah Bersama",
+    description: "Bergabunglah membangun masjid yang indah untuk komunitas kita",
     type: "website",
+    locale: "id_ID",
   },
 };
 
@@ -31,7 +32,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="id">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >

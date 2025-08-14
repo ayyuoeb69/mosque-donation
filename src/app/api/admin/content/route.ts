@@ -39,7 +39,12 @@ export async function PUT(request: NextRequest) {
       afterRenovationDesc, 
       bankName, 
       accountNumber, 
-      accountName 
+      accountName,
+      whatsappUrl,
+      emailContact,
+      instagramUrl,
+      twitterUrl,
+      tiktokUrl
     } = body
 
     // Convert empty strings to null for optional fields
@@ -53,7 +58,12 @@ export async function PUT(request: NextRequest) {
       afterRenovationDesc: afterRenovationDesc || null,
       bankName: bankName || null,
       accountNumber: accountNumber || null,
-      accountName: accountName || null
+      accountName: accountName || null,
+      whatsappUrl: whatsappUrl || null,
+      emailContact: emailContact || null,
+      instagramUrl: instagramUrl || null,
+      twitterUrl: twitterUrl || null,
+      tiktokUrl: tiktokUrl || null
     }
 
     console.log("Processed data:", JSON.stringify(processedData, null, 2))

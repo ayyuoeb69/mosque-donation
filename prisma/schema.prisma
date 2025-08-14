@@ -9,7 +9,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -38,6 +38,12 @@ model MosqueContent {
   bankName              String?
   accountNumber         String?
   accountName           String?
+  proposalPdfUrl        String?
+  whatsappUrl           String?
+  emailContact          String?
+  instagramUrl          String?
+  twitterUrl            String?
+  tiktokUrl             String?
   isActive              Boolean  @default(true)
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
@@ -67,4 +73,15 @@ model DonationRecap {
   verifiedAt    DateTime?
   verifiedBy    String?
   createdAt     DateTime @default(now())
+}
+
+model ProgressImage {
+  id          String   @id @default(cuid())
+  imageUrl    String
+  caption     String
+  description String?
+  date        DateTime
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

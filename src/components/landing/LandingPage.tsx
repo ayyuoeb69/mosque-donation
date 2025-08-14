@@ -2,11 +2,20 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { Heart, Users, Target, Calendar, Star } from "lucide-react";
+import {
+  Heart,
+  Users,
+  Target,
+  Calendar,
+  Star,
+  MessageCircle,
+  Mail,
+} from "lucide-react";
 import DonationForm from "./DonationForm";
 import PaymentPopup from "./PaymentPopup";
 import DonationRecapForm from "./DonationRecapForm";
 import PrayersSection from "./PrayersSection";
+import ProgressSection from "./ProgressSection";
 
 interface MosqueContent {
   id: string;
@@ -25,6 +34,12 @@ interface MosqueContent {
   bankName?: string | null;
   accountNumber?: string | null;
   accountName?: string | null;
+  proposalPdfUrl?: string | null;
+  whatsappUrl?: string | null;
+  emailContact?: string | null;
+  instagramUrl?: string | null;
+  twitterUrl?: string | null;
+  tiktokUrl?: string | null;
 }
 
 interface Donation {
@@ -47,7 +62,6 @@ export default function LandingPage({
   const [showDonationForm, setShowDonationForm] = useState(false);
   const [showPaymentPopup, setShowPaymentPopup] = useState(false);
   const [showRecapForm, setShowRecapForm] = useState(false);
-  const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
   const [lastDonationId, setLastDonationId] = useState<string | null>(null);
   const progressPercentage = (content.currentAmount / content.goal) * 100;
 
@@ -117,13 +131,26 @@ export default function LandingPage({
                 </div>
               </div>
 
-              <button
-                onClick={handleDonateNow}
-                className="inline-flex items-center px-8 py-4 border border-transparent text-lg font-medium rounded-lg text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-colors duration-200"
-              >
-                <Heart className="w-5 h-5 mr-2" />
-                Donasi Sekarang
-              </button>
+              <div className="flex flex-col sm:flex-row gap-4 items-center lg:items-start justify-center lg:justify-start">
+                <button
+                  onClick={handleDonateNow}
+                  className="inline-flex items-center px-8 py-4 border border-transparent text-lg font-medium rounded-lg text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-colors duration-200"
+                >
+                  <Heart className="w-5 h-5 mr-2" />
+                  Donasi Sekarang
+                </button>
+
+                {content.proposalPdfUrl && (
+                  <a
+                    href={content.proposalPdfUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center px-8 py-4.5 border border-emerald-600 text-emerald-600 hover:bg-emerald-50 font-medium rounded-lg transition-colors duration-200"
+                  >
+                    📄 Detail Proposal
+                  </a>
+                )}
+              </div>
             </div>
 
             {/* Hero Image */}
@@ -195,11 +222,11 @@ export default function LandingPage({
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold text-gray-900 mb-4">
-                Perjalanan Renovasi Masjid
+                Rencana Renovasi Pembangunan
               </h2>
-              <p className="text-lg text-gray-600">
-                Melihat transformasi masjid dari masa ke masa
-              </p>
+              {/* <p className="text-lg text-gray-600">
+                Rencana yang akan oleh kami
+              </p> */}
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
@@ -269,6 +296,9 @@ export default function LandingPage({
         </section>
       )}
 
+      {/* Progress Section */}
+      <ProgressSection />
+
       {/* Recent Donations */}
       {recentDonations.length > 0 && (
         <section className="py-16 bg-gray-50">
@@ -331,6 +361,79 @@ export default function LandingPage({
               "Siapa yang membangun masjid karena Allah, maka Allah akan
               membangunkan untuknya rumah di surga."
             </p>
+
+            {/* Social Media Links */}
+            {(content.whatsappUrl ||
+              content.emailContact ||
+              content.instagramUrl ||
+              content.twitterUrl ||
+              content.tiktokUrl) && (
+              <div className="mb-5 pb-5 border-b border-b-white/10">
+                <h4 className="text-lg font-medium mb-4 text-gray-300">
+                  Hubungi Kami
+                </h4>
+                <div className="flex justify-center space-x-4 space-y-4 flex-wrap">
+                  {content.whatsappUrl && (
+                    <a
+                      href={content.whatsappUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex h-[44px] items-center space-x-2 bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg transition-colors"
+                    >
+                      <MessageCircle className="w-5 h-5" />
+                      <span>WhatsApp</span>
+                    </a>
+                  )}
+
+                  {content.emailContact && (
+                    <a
+                      href={`mailto:${content.emailContact}`}
+                      className="flex h-[44px] items-center space-x-2 bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition-colors"
+                    >
+                      <Mail className="w-5 h-5" />
+                      <span>Email</span>
+                    </a>
+                  )}
+
+                  {content.instagramUrl && (
+                    <a
+                      href={content.instagramUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex h-[44px] items-center space-x-2 bg-pink-600 hover:bg-pink-700 px-4 py-2 rounded-lg transition-colors"
+                    >
+                      <span className="text-lg">📷</span>
+                      <span>Instagram</span>
+                    </a>
+                  )}
+
+                  {content.twitterUrl && (
+                    <a
+                      href={content.twitterUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex h-[44px] items-center space-x-2 bg-sky-600 hover:bg-sky-700 px-4 py-2 rounded-lg transition-colors"
+                    >
+                      <span className="text-lg">🐦</span>
+                      <span>Twitter</span>
+                    </a>
+                  )}
+
+                  {content.tiktokUrl && (
+                    <a
+                      href={content.tiktokUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex h-[44px] items-center space-x-2 bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded-lg transition-colors"
+                    >
+                      <span className="text-lg">🎵</span>
+                      <span>TikTok</span>
+                    </a>
+                  )}
+                </div>
+              </div>
+            )}
+
             <div className="flex justify-center space-x-6">
               <button
                 onClick={handleDonateNow}
