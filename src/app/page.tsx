@@ -3,33 +3,49 @@ import LandingPage from "@/components/landing/LandingPage"
 import StructuredData from "@/components/StructuredData"
 import { Metadata } from "next"
 
+// Force dynamic rendering to avoid database calls at build time
+export const dynamic = 'force-dynamic'
+
 async function getContent() {
-  const content = await prisma.mosqueContent.findFirst({
-    where: { isActive: true }
-  })
-  return content
+  try {
+    const content = await prisma.mosqueContent.findFirst({
+      where: { isActive: true }
+    })
+    return content
+  } catch (error) {
+    console.error('Database connection error:', error)
+    return null
+  }
 }
 
 async function getDonations() {
-  const donations = await prisma.donation.findMany({
-    where: {
-      isAnonymous: false,
-      donorName: { not: null }
-    },
-    orderBy: { createdAt: "desc" },
-    take: 10
-  })
-  return donations
+  try {
+    const donations = await prisma.donation.findMany({
+      where: {
+        isAnonymous: false,
+        donorName: { not: null }
+      },
+      orderBy: { createdAt: "desc" },
+      take: 10
+    })
+    return donations
+  } catch (error) {
+    console.error('Database connection error:', error)
+    return []
+  }
 }
 
 export async function generateMetadata(): Promise<Metadata> {
   const content = await getContent()
   
+  // Fallback metadata when database is not available
+  const fallbackMetadata = {
+    title: "Donasi Masjid - Membangun Rumah Ibadah Bersama",
+    description: "Bergabunglah membangun masjid yang indah untuk menjadi pusat ibadah, berkumpul komunitas, dan pendidikan Islam."
+  }
+  
   if (!content) {
-    return {
-      title: "Donasi Masjid - Membangun Rumah Ibadah Bersama",
-      description: "Bergabunglah membangun masjid yang indah untuk menjadi pusat ibadah, berkumpul komunitas, dan pendidikan Islam."
-    }
+    return fallbackMetadata
   }
 
   const progressPercentage = Math.round((content.currentAmount / content.goal) * 100)
