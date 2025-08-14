@@ -299,56 +299,6 @@ export default function LandingPage({
       {/* Progress Section */}
       <ProgressSection />
 
-      {/* Recent Donations */}
-      {recentDonations.length > 0 && (
-        <section className="py-16 bg-gray-50">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">
-                Donasi Terbaru
-              </h2>
-              <p className="text-lg text-gray-600">
-                Terima kasih kepada para donatur yang mulia hati
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {recentDonations.map((donation) => (
-                <div
-                  key={donation.id}
-                  className="bg-white rounded-lg shadow-md p-6 border border-gray-100"
-                >
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex items-center">
-                      <div className="bg-emerald-100 rounded-full p-2 mr-3">
-                        <Heart className="w-4 h-4 text-emerald-600" />
-                      </div>
-                      <div>
-                        <h4 className="font-semibold text-gray-900">
-                          {donation.donorName || "Anonim"}
-                        </h4>
-                        <p className="text-sm text-gray-500">
-                          Rp {donation.amount.toLocaleString("id-ID")}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                  {donation.message && (
-                    <p className="text-gray-600 text-sm mb-3 italic">
-                      "{donation.message}"
-                    </p>
-                  )}
-                  <div className="flex items-center text-xs text-gray-500">
-                    <Calendar className="w-3 h-3 mr-1" />
-                    {new Date(donation.createdAt).toLocaleDateString()}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
       {/* Footer */}
       {/* Prayers Section */}
       <PrayersSection />

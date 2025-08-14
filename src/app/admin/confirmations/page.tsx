@@ -39,6 +39,7 @@ export default function AdminConfirmations() {
   const [isLoading, setIsLoading] = useState(true);
   const [message, setMessage] = useState("");
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [processingIds, setProcessingIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -68,6 +69,9 @@ export default function AdminConfirmations() {
     id: string,
     action: "verify" | "reject" | "cancel"
   ) => {
+    // Add ID to processing set to show loading state
+    setProcessingIds(prev => new Set(prev).add(id));
+    
     try {
       const response = await fetch("/api/admin/confirmations", {
         method: "PUT",
@@ -95,6 +99,13 @@ export default function AdminConfirmations() {
       }
     } catch (error) {
       setMessage("Error memperbarui konfirmasi");
+    } finally {
+      // Remove ID from processing set
+      setProcessingIds(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(id);
+        return newSet;
+      });
     }
   };
 
@@ -304,19 +315,29 @@ export default function AdminConfirmations() {
                                 onClick={() =>
                                   handleAction(confirmation.id, "verify")
                                 }
-                                className="inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded-md text-white bg-green-600 hover:bg-green-700"
+                                disabled={processingIds.has(confirmation.id)}
+                                className="inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded-md text-white bg-green-600 hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
                               >
-                                <CheckCircle className="w-3 h-3 mr-1" />
-                                Verifikasi
+                                {processingIds.has(confirmation.id) ? (
+                                  <div className="w-3 h-3 mr-1 border border-white border-t-transparent rounded-full animate-spin"></div>
+                                ) : (
+                                  <CheckCircle className="w-3 h-3 mr-1" />
+                                )}
+                                {processingIds.has(confirmation.id) ? "Memverifikasi..." : "Verifikasi"}
                               </button>
                               <button
                                 onClick={() =>
                                   handleAction(confirmation.id, "reject")
                                 }
-                                className="inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded-md text-white bg-red-600 hover:bg-red-700"
+                                disabled={processingIds.has(confirmation.id)}
+                                className="inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded-md text-white bg-red-600 hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
                               >
-                                <XCircle className="w-3 h-3 mr-1" />
-                                Tolak
+                                {processingIds.has(confirmation.id) ? (
+                                  <div className="w-3 h-3 mr-1 border border-white border-t-transparent rounded-full animate-spin"></div>
+                                ) : (
+                                  <XCircle className="w-3 h-3 mr-1" />
+                                )}
+                                {processingIds.has(confirmation.id) ? "Menolak..." : "Tolak"}
                               </button>
                             </>
                           ) : (
@@ -324,9 +345,17 @@ export default function AdminConfirmations() {
                               onClick={() =>
                                 handleAction(confirmation.id, "cancel")
                               }
-                              className="inline-flex items-center px-2 py-1 border border-gray-300 text-xs font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                              disabled={processingIds.has(confirmation.id)}
+                              className="inline-flex items-center px-2 py-1 border border-gray-300 text-xs font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                              Reset
+                              {processingIds.has(confirmation.id) ? (
+                                <>
+                                  <div className="w-3 h-3 mr-1 border border-gray-600 border-t-transparent rounded-full animate-spin"></div>
+                                  Mereset...
+                                </>
+                              ) : (
+                                "Reset"
+                              )}
                             </button>
                           )}
                         </div>
