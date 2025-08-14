@@ -1,104 +1,118 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
-import { X, Upload, CheckCircle } from "lucide-react"
-import Captcha from "../ui/Captcha"
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { X, Upload, CheckCircle } from "lucide-react";
+import Captcha from "../ui/Captcha";
 
 const recapSchema = z.object({
   donationId: z.string(),
   donorName: z.string().min(1, "Nama wajib diisi"),
-  donorEmail: z.string().email("Email tidak valid").optional().or(z.literal("")),
+  donorEmail: z
+    .string()
+    .email("Email tidak valid")
+    .optional()
+    .or(z.literal("")),
   donorPhone: z.string().optional(),
   notes: z.string().optional(),
-  captchaVerified: z.boolean().refine(val => val === true, "Verifikasi captcha wajib diselesaikan")
-})
+  captchaVerified: z
+    .boolean()
+    .refine((val) => val === true, "Verifikasi captcha wajib diselesaikan"),
+});
 
-type RecapForm = z.infer<typeof recapSchema>
+type RecapForm = z.infer<typeof recapSchema>;
 
 interface DonationRecapFormProps {
-  onClose: () => void
-  donationId: string
+  onClose: () => void;
+  donationId: string;
 }
 
-export default function DonationRecapForm({ onClose, donationId }: DonationRecapFormProps) {
-  const [isLoading, setIsLoading] = useState(false)
-  const [isSuccess, setIsSuccess] = useState(false)
-  const [transferProof, setTransferProof] = useState<File | null>(null)
-  const [fileError, setFileError] = useState<string | null>(null)
-  const [captchaVerified, setCaptchaVerified] = useState(false)
+export default function DonationRecapForm({
+  onClose,
+  donationId,
+}: DonationRecapFormProps) {
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [transferProof, setTransferProof] = useState<File | null>(null);
+  const [fileError, setFileError] = useState<string | null>(null);
+  const [captchaVerified, setCaptchaVerified] = useState(false);
 
-  const { register, handleSubmit, formState: { errors }, setValue } = useForm<RecapForm>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+  } = useForm<RecapForm>({
     resolver: zodResolver(recapSchema),
     defaultValues: {
       donationId: donationId,
-      captchaVerified: false
-    }
-  })
+      captchaVerified: false,
+    },
+  });
 
   const onSubmit = async (data: RecapForm) => {
     if (!transferProof) {
-      setFileError("Bukti transfer wajib diupload")
-      return
+      setFileError("Bukti transfer wajib diupload");
+      return;
     }
 
     if (!captchaVerified) {
-      alert("Harap selesaikan verifikasi captcha terlebih dahulu")
-      return
+      alert("Harap selesaikan verifikasi captcha terlebih dahulu");
+      return;
     }
 
-    setIsLoading(true)
+    setIsLoading(true);
 
     try {
-      const formData = new FormData()
+      const formData = new FormData();
       Object.entries(data).forEach(([key, value]) => {
-        if (value) formData.append(key, String(value))
-      })
-      
+        if (value) formData.append(key, String(value));
+      });
+
       if (transferProof) {
-        formData.append("transferProof", transferProof)
+        formData.append("transferProof", transferProof);
       }
 
       const response = await fetch("/api/donation-recap", {
         method: "POST",
-        body: formData
-      })
+        body: formData,
+      });
 
       if (response.ok) {
-        setIsSuccess(true)
+        setIsSuccess(true);
         setTimeout(() => {
-          onClose()
-        }, 2000)
+          onClose();
+        }, 2000);
       } else {
-        throw new Error("Failed to submit donation recap")
+        throw new Error("Failed to submit donation recap");
       }
     } catch (error) {
-      console.error("Error submitting donation recap:", error)
-      alert("Error mengirim konfirmasi donasi. Silakan coba lagi.")
+      console.error("Error submitting donation recap:", error);
+      alert("Error mengirim konfirmasi donasi. Silakan coba lagi.");
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
+    const file = e.target.files?.[0];
     if (file) {
       // Check file size (1MB limit)
       if (file.size > 1024 * 1024) {
-        setFileError("Ukuran file maksimal 1MB")
-        return
+        setFileError("Ukuran file maksimal 1MB");
+        return;
       }
-      setTransferProof(file)
-      setFileError(null)
+      setTransferProof(file);
+      setFileError(null);
     }
-  }
+  };
 
   const handleCaptchaVerify = (verified: boolean) => {
-    setCaptchaVerified(verified)
-    setValue('captchaVerified', verified)
-  }
+    setCaptchaVerified(verified);
+    setValue("captchaVerified", verified);
+  };
 
   if (isSuccess) {
     return (
@@ -112,12 +126,13 @@ export default function DonationRecapForm({ onClose, donationId }: DonationRecap
               Konfirmasi Terkirim!
             </h2>
             <p className="text-gray-600">
-              Terima kasih atas konfirmasi donasi Anda. Kami akan memverifikasi pembayaran segera.
+              Terima kasih atas konfirmasi donasi Anda. Kami akan memverifikasi
+              pembayaran segera.
             </p>
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -143,7 +158,8 @@ export default function DonationRecapForm({ onClose, donationId }: DonationRecap
               Isi form ini setelah melakukan donasi
             </h3>
             <p className="text-sm text-emerald-700">
-              Form ini membantu kami memverifikasi dan mencatat donasi Anda dengan lebih baik.
+              Form ini membantu kami memverifikasi dan mencatat donasi Anda
+              dengan lebih baik.
             </p>
           </div>
 
@@ -154,11 +170,13 @@ export default function DonationRecapForm({ onClose, donationId }: DonationRecap
             <input
               {...register("donorName")}
               type="text"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+              className="w-full px-3 py-2 text-black border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
               placeholder="Masukkan nama lengkap Anda"
             />
             {errors.donorName && (
-              <p className="mt-1 text-sm text-red-600">{errors.donorName.message}</p>
+              <p className="mt-1 text-sm text-red-600">
+                {errors.donorName.message}
+              </p>
             )}
           </div>
 
@@ -169,11 +187,13 @@ export default function DonationRecapForm({ onClose, donationId }: DonationRecap
             <input
               {...register("donorEmail")}
               type="email"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+              className="w-full px-3 py-2 text-black border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
               placeholder="nama@email.com"
             />
             {errors.donorEmail && (
-              <p className="mt-1 text-sm text-red-600">{errors.donorEmail.message}</p>
+              <p className="mt-1 text-sm text-red-600">
+                {errors.donorEmail.message}
+              </p>
             )}
           </div>
 
@@ -184,7 +204,7 @@ export default function DonationRecapForm({ onClose, donationId }: DonationRecap
             <input
               {...register("donorPhone")}
               type="tel"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+              className="w-full px-3 py-2 text-black border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
               placeholder="08xxxxxxxxxx"
             />
           </div>
@@ -224,9 +244,7 @@ export default function DonationRecapForm({ onClose, donationId }: DonationRecap
               </p>
             )}
             {fileError && (
-              <p className="mt-2 text-sm text-red-600">
-                {fileError}
-              </p>
+              <p className="mt-2 text-sm text-red-600">{fileError}</p>
             )}
           </div>
 
@@ -237,7 +255,7 @@ export default function DonationRecapForm({ onClose, donationId }: DonationRecap
             <textarea
               {...register("notes")}
               rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+              className="w-full px-3 py-2 text-black border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
               placeholder="Sampaikan doa dan harapan Anda untuk masjid ini..."
             />
           </div>
@@ -249,7 +267,9 @@ export default function DonationRecapForm({ onClose, donationId }: DonationRecap
             </label>
             <Captcha onVerify={handleCaptchaVerify} />
             {errors.captchaVerified && (
-              <p className="mt-1 text-sm text-red-600">{errors.captchaVerified.message}</p>
+              <p className="mt-1 text-sm text-red-600">
+                {errors.captchaVerified.message}
+              </p>
             )}
           </div>
 
@@ -273,5 +293,5 @@ export default function DonationRecapForm({ onClose, donationId }: DonationRecap
         </form>
       </div>
     </div>
-  )
+  );
 }
