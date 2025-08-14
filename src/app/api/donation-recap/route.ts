@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
-import { writeFile } from "fs/promises"
-import path from "path"
+import { uploadToCloudinary } from "@/lib/cloudinary"
 
 export async function POST(request: NextRequest) {
   try {
@@ -21,14 +20,12 @@ export async function POST(request: NextRequest) {
 
     // Handle file upload if provided
     if (transferProofFile) {
-      const bytes = await transferProofFile.arrayBuffer()
-      const buffer = Buffer.from(bytes)
-
-      const filename = `transfer-proof-${Date.now()}-${transferProofFile.name}`
-      const filepath = path.join(process.cwd(), "public/uploads", filename)
-
-      await writeFile(filepath, buffer)
-      transferProofUrl = `/uploads/${filename}`
+      try {
+        transferProofUrl = await uploadToCloudinary(transferProofFile, 'mosque-donation/transfer-proofs')
+      } catch (uploadError) {
+        console.error("File upload error:", uploadError)
+        return NextResponse.json({ error: "Failed to upload transfer proof" }, { status: 500 })
+      }
     }
 
     // Create donation recap record
